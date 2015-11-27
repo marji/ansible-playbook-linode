@@ -1,0 +1,84 @@
+---
+# 2015/11/27 by Marji
+# An ansible playbook to provision a new linode and give it a hostname
+# and a FQDN, deploys a public ssh key under its root account and
+# disable password based ssh login.
+#
+# Usage:
+#   export LINODE_API_KEY=4kfjh59shlhdkjhksdj00sdsTTsskklkjoiRPrbDtgHY
+#   ansible-playbook --extra-vars server_hostname=hades provision.yml
+#
+- name: Provision new linode
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+  - vars/config.yml
+
+  tasks:
+  - name: Fail if server_hostname is not defined
+    fail: msg="server_hostname needs to be defined via commandline, e.g. --extra-vars server_hostname=flower"
+    when: server_hostname is not defined
+
+  - name: Create linode server via Linode API
+    # http://docs.ansible.com/ansible/linode_module.html
+    linode:
+      name: "{{ server_hostname }}"
+      plan: "{{ linode_plan }}"
+      datacenter: "{{ linode_datacenter }}"
+      distribution: "{{ linode_distribution }}"
+      ssh_pub_key: "{{ root_ssh_pub_key }}"
+      swap: "{{ linode_swap }}"
+      wait: yes
+      wait_timeout: 600
+      state: present
+    register: linode
+
+  - name: Show me the registered linode
+    debug: var=linode
+
+  - name: Add new host to in-memory inventory
+    add_host:
+      hostname: "{{ linode.instance.ipv4 }}"
+      groupname: "linode"
+
+  - name: Wait for Linode to listen on port 22
+    wait_for:
+      state: started
+      host: "{{ linode.instance.ipv4 }}"
+      port: 22
+
+
+
+- name: Common configuration on the new server
+  hosts: linode
+  user: root
+
+  vars_files:
+    - vars/config.yml
+  vars:
+    server_fqdn: "{{ server_hostname }}.{{ server_domain }}"
+
+  tasks:
+    - name: set hostname
+      hostname: name="{{ server_hostname }}"
+
+    - name: set FQDN
+      lineinfile:
+        dest=/etc/hosts
+        regexp='{{ item }}$'
+        line="{{ item }} {{ server_fqdn }} {{ server_hostname }}"
+        state=present
+      with_items: groups['linode']
+
+    - name: ssh key only
+      copy: src=files/ssh/sshd_config dest=/etc/ssh/sshd_config
+      notify: restart ssh
+
+  handlers:
+    - name: restart ssh
+      service: name=ssh state=restarted
+
+
+# vim:ft=ansible:
