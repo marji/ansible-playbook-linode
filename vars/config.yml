@@ -1,7 +1,0 @@
----
-server_domain: morpht.com
-linode_swap: 1024
-linode_plan: 1
-linode_datacenter: 3
-linode_distribution: 124
-root_ssh_pub_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHvQ6kNX8b5ugsk8JnQbMTj31wAZ2PD/PQCfVGD8xQEswXgL6/CUrymERS9ATGZL67h0E9x8jRygkLLshIFkCJ8Xwx7lNMs0G1g+Uz+CsiRmJc64CROQdNDy2q0fD4fpdHImv+K6U+sYEA3iJTP5p8/t7Wt0LBGWWSmz9p87s6AxXzarb8pKrVFMWPgoZ5C2D7ktzxmQ8B1gp/jYFEL78oGszZTqhSSUYtgCEJsIDjOjssh9Hai60vX8u/a6X/ime/zGkwj/tZBB7Nv3yDP3sb6tot7aTpTbKrQR52gv611Vv4I8dlLSXLd/PyHsXEe0TrV6R4VARH4jGLR4I7ghZB marji@morpht.com'

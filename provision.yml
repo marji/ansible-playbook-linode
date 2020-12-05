@@ -1,10 +1,12 @@
 ---
 # 2015/11/27 by Marji
-# An ansible playbook to provision a new linode and give it a hostname
-# and a FQDN, deploys a public ssh key under its root account and
-# disable password based ssh login.
+# 2020/12/05 by Pratik Raj
 #
+# An ansible playbook to provision a new linode and give it a hostname
+# and a FQDN, deploys a public ssh key under its root account.
+# 
 # Usage:
+#   
 #   export LINODE_API_KEY=4kfjh59shlhdkjhksdj00sdsTTsskklkjoiRPrbDtgHY
 #   ansible-playbook --extra-vars server_hostname=hades provision.yml
 #
@@ -23,15 +25,16 @@
 
   - name: Create linode server via Linode API
     # http://docs.ansible.com/ansible/linode_module.html
-    linode:
-      name: "{{ server_hostname }}"
-      plan: "{{ linode_plan }}"
-      datacenter: "{{ linode_datacenter }}"
-      distribution: "{{ linode_distribution }}"
-      ssh_pub_key: "{{ root_ssh_pub_key }}"
-      swap: "{{ linode_swap }}"
-      wait: yes
-      wait_timeout: 600
+    linode_v4:
+      label: "{{ label }}"
+      access_token: "{{ token }}"
+      type: "{{ instance_type }}"
+      region: "{{ region }}"
+      image: "{{ instance_image }}"
+      root_pass: "{{ password }}"
+      authorized_keys: "{{ root_ssh_pub_key }}"
+      group: "{{ group }}"
+      tags: "{{ tag }}"
       state: present
     register: linode
 
@@ -40,13 +43,13 @@
 
   - name: Add new host to in-memory inventory
     add_host:
-      hostname: "{{ linode.instance.ipv4 }}"
+      hostname: "{{ linode.instance.ipv4[0] }}"
       groupname: "linode"
 
   - name: Wait for Linode to listen on port 22
     wait_for:
       state: started
-      host: "{{ linode.instance.ipv4 }}"
+      host: "{{ linode.instance.ipv4[0] }}"
       port: 22
 
 
