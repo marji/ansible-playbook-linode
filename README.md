@@ -25,7 +25,7 @@ Copy sample config `vars/config.yml.example` to `vars/config.yml`.
 
 Change variables in `vars/config.yml` to suit your needs.
 
-Then,finally deploy instance by running playbook `provision.yml`
+Then, deploy instance by running playbook `provision.yml`
 
 ```
 $ export LINODE_API_KEY="Enter Your API KEY"
@@ -33,3 +33,12 @@ $ ansible-playbook provision.yml
 ```
 
 After the playbook finishes, you can login via ssh as root@THE-IP-IN-THE-OUTPUT.
+
+### Cleanup
+
+finally cleanup the instance by running playbook `delete.yml`
+
+```
+$ export LINODE_API_KEY="Enter Your API KEY"
+$ ansible-playbook delete.yml
+```

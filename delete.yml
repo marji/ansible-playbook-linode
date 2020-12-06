@@ -1,0 +1,24 @@
+#
+# 2020/12/05 by Pratik Raj
+#
+# An ansible playbook to Delete linode server by Instance Label
+#
+# Usage:
+#
+#   export LINODE_API_KEY=4kfjh59shlhdkjhksdj00sdsTTsskklkjoiRPrbDtgHY
+#   ansible-playbook delete.yml
+#
+- name: Delete linode server
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+  - vars/config.yml
+
+  tasks:
+  - name: Delete your Linode Instance.
+    linode_v4:
+      access_token: "{{ token }}"
+      label: "{{ label }}"
+      state: absent
