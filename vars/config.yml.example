@@ -1,0 +1,12 @@
+---
+server_domain: 'CHANGE_ME'
+label: 'CHANGE_ME'
+token: 'CHANGE_ME'
+instance_type: 'g6-nanode-1'
+region: 'us-east'
+instance_image: 'linode/debian9'
+password: 'CHANGE_ME'
+group: 'CHANGE_ME'
+tag: 'CHANGE_ME'
+root_ssh_pub_key: 'CHANGE_ME'
+server_hostname: 'CHANGE_ME'
